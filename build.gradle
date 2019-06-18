@@ -1,0 +1,62 @@
+group 'com.dustin'
+version '1.0-SNAPSHOT'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    ext {
+        springBootVersion = '2.0.5.RELEASE'
+        springCloudVersion = 'Finchley.SR1'
+        junitVersion = "4.12"
+    }
+
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        //mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        //testCompile 'org.springframework:spring-test:4.2.2.RELEASE'
+        //testCompile "org.springframework.boot:spring-boot-starter-test"
+    }
+}
+allprojects{
+    tasks.withType(JavaCompile){
+        options.encoding = "UTF-8"
+    }
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenLocal()
+        mavenCentral()
+    }
+//    dependencies {
+//        //testCompile 'org.springframework.boot:pring-boot-starter-test:2.1.5.RELEASE'
+//        testCompile 'junit:junit:4.12'
+//    }
+}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    //spring boot 插件
+    apply plugin:'org.springframework.boot'
+    //A Gradle plugin that provides Maven-like dependency management functionality
+    apply plugin:'io.spring.dependency-management'
+    dependencies {
+        compile('org.springframework.boot:spring-boot-starter-web')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        //testCompile group: 'junit', name: 'junit', version: '4.12'
+        //testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+    dependencyManagement {
+        imports {
+            //spring bom helps us to declare dependencies without specifying version numbers.
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+}
